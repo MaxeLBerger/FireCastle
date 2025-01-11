@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
 const NodeCache = require('node-cache');
+const logger = require('./src/utils/logger');
 
 const clanRoutes = require('./src/routes/clanRoutes');
 const playerRoutes = require('./src/routes/playerRoutes');
@@ -27,7 +28,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors()); // CORS aktivieren
 app.use(express.json()); // Für JSON-Parsing
 app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    logger.info(`${req.method} ${req.url}`);
     next();
 });
 app.use(express.static(path.join(__dirname, '../public'))); // Statische Dateien bereitstellen
@@ -37,7 +38,7 @@ app.use((req, res, next) => {
     const key = req.originalUrl;
     const cachedResponse = cache.get(key);
     if (cachedResponse) {
-        console.log(`Cache hit for ${key}`);
+        logger.info(`Cache hit for ${key}`);
         return res.json(cachedResponse);
     }
     res.sendResponse = res.json;
@@ -65,7 +66,13 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../index.html'));
 });
 
+// Fehlerbehandlung
+app.use((err, req, res, next) => {
+    logger.error(`${err.message}`);
+    res.status(500).json({ error: 'Internal Server Error' });
+});
+
 // Server starten
 app.listen(PORT, () => {
-    console.log(`Server läuft auf http://localhost:${PORT}`);
+    logger.info(`Server läuft auf http://localhost:${PORT}`);
 });
