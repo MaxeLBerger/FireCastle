@@ -1,0 +1,169 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #1a1a1a;
+    color: #fff;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+}
+
+/* Header Styles */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--primary-color, #ff4500);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header .logo img {
+    height: 60px;
+}
+
+header nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 20px;
+}
+
+header nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+}
+
+header nav ul li a:hover {
+    color: var(--accent-color, #ff6347);
+}
+
+/* New Styles for Live War Status and Clan Capital Guide */
+#live-war-status, #clanstadt {
+    background: linear-gradient(to bottom, #333, #111);
+    color: #fff;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+}
+
+#war-status p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Progress bar, Header, and other existing styles remain the same */
+
+/* Progress Bar */
+#progress-bar-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: #330000;
+    z-index: 9999;
+}
+
+#progress-bar {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(to right, var(--primary-color, #ff4500), var(--accent-color, #ff6347));
+    transition: width 0.3s ease-in-out;
+}
+
+/* Section Styles */
+section {
+    background: var(--background-color, #222);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 1s ease-in-out;
+}
+
+section h2 {
+    color: var(--accent-color, #ff6347);
+    text-transform: uppercase;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px var(--primary-color, #ff4500);
+}
+
+form label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #fffacd;
+}
+
+form input, form button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+form input {
+    background: #2a2a2a;
+    color: #fff;
+    border: 1px solid var(--accent-color, #ff6347);
+}
+
+form button {
+    background: var(--primary-color, #ff4500);
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+form button:hover {
+    background: var(--accent-color, #ff6347);
+    transform: scale(1.05);
+}
+
+/* Clan and Player Result */
+#clan-result, #player-result {
+    margin-top: 20px;
+    padding: 10px;
+    background: #333;
+    border-radius: 10px;
+    color: #fff;
+}
+
+#clan-result img, #player-result img {
+    display: block;
+    margin: 10px auto;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color, #ff4500);
+}
+
+#clan-result h3, #player-result h3 {
+    text-transform: uppercase;
+    color: var(--accent-color, #ff6347);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

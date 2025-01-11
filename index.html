@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FireCastle Clan</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="images/clan-logo.png" alt="FireCastle Clan Logo" id="clan-logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#clan-search">Clan Search</a></li>
+                <li><a href="#player-search">Player Search</a></li>
+                <li><a href="#attack-strategies">Attack Strategies</a></li>
+                <li><a href="#application">Join Us</a></li>
+                <li><a href="#clanstadt">Clan Capital Guide</a></li>
+                <li><a href="#live-war-status">Live War Status</a></li>
+                <li><a href="#about-us">About Us</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <!-- Particle Background -->
+        <div id="particle-bg"></div>
+
+        <!-- Scroll Progress Bar -->
+        <div id="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
+
+        <!-- Clan Search Section -->
+        <section id="clan-search" class="dynamic-bg">
+            <h2>Search for a Clan</h2>
+            <form onsubmit="fetchClanData(); return false;">
+                <label for="clan-tag">Clan Tag:</label>
+                <input type="text" id="clan-tag" placeholder="#P9QGQLPU" value="#P9QGQLPU" required>
+                <button type="submit">Search Clan</button>
+            </form>
+            <div id="clan-result">
+                <h3>Clan Details</h3>
+                <img id="clan-badge" src="images/default-badge.png" alt="Clan Badge">
+                <p id="clan-name">Name: <span></span></p>
+                <p id="clan-level">Level: <span></span></p>
+                <p id="clan-points">Points: <span></span></p>
+                <p id="clan-members">Members: <span></span></p>
+                <p id="clan-warwinrate">War Winrate: <span></span></p>
+                <p id="clan-description">Description: <span></span></p>
+            </div>
+        </section>
+
+        <!-- Clan Capital Guide -->
+        <section id="clanstadt" class="static-bg">
+            <h2>Clan Capital Guide</h2>
+            <p>Learn how to build the best Clan Capital layouts and strategies:</p>
+            <ul>
+                <li>Optimal layouts for Capital Hall levels</li>
+                <li>Attack strategies for Capital Raids</li>
+                <li>Tips for upgrading and managing districts</li>
+            </ul>
+        </section>
+
+        <!-- Live War Status -->
+        <section id="live-war-status" class="dynamic-bg">
+            <h2>Live War Status</h2>
+            <div id="war-status">
+                <p>Fetching live war data...</p>
+            </div>
+        </section>
+
+        <!-- Player Search -->
+        <section id="player-search" class="dynamic-bg">
+            <h2>Search for a Player</h2>
+            <form onsubmit="fetchPlayerData(); return false;">
+                <label for="player-tag">Player Tag:</label>
+                <input type="text" id="player-tag" placeholder="#12345ABC" required>
+                <button type="submit">Search Player</button>
+            </form>
+            <div id="player-result">
+                <h3>Player Details</h3>
+                <p id="player-name">Name: <span></span></p>
+                <p id="player-level">Level: <span></span></p>
+                <p id="player-trophies">Trophies: <span></span></p>
+                <p id="player-donations">Donations: <span></span></p>
+                <p id="player-attacks">Attack Wins: <span></span></p>
+                <p id="player-defenses">Defense Wins: <span></span></p>
+            </div>
+        </section>
+
+        <!-- Attack Strategies -->
+        <section id="attack-strategies" class="static-bg">
+            <h2>Attack Strategies</h2>
+            <ul>
+                <li>Warden Walk + Dragons</li>
+                <li>Electro Titan Smash</li>
+                <li>Queen Charge Lalo</li>
+                <li>Pekka Smash</li>
+                <li>Hybrid Miner + Hog Rider Attack</li>
+            </ul>
+        </section>
+
+        <!-- Application Form -->
+        <section id="application" class="static-bg">
+            <h2>Join FireCastle Clan</h2>
+            <form>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required>
+                <label for="player-tag">Player Tag:</label>
+                <input type="text" id="player-tag" name="player-tag" required>
+                <label for="townhall-level">Town Hall Level:</label>
+                <input type="number" id="townhall-level" name="townhall-level" required>
+                <label for="war-stars">War Stars:</label>
+                <input type="number" id="war-stars" name="war-stars" required>
+                <label for="best-ranking">Best Ranking (optional):</label>
+                <input type="text" id="best-ranking" name="best-ranking">
+                <button type="submit">Apply Now</button>
+            </form>
+        </section>
+
+        <!-- About Us -->
+        <section id="about-us" class="static-bg">
+            <h2>About FireCastle Clan</h2>
+            <p>Welcome to FireCastle Clan! We are a passionate group of players aiming for victory in Clash of Clans.</p>
+            <p>Clan Leader: TheFireKing</p>
+            <p>Co-Leaders: FlameMaster, BlazeQueen</p>
+            <p>Join us to experience epic battles, strategic gameplay, and a fun, active community!</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 FireCastle Clan - Powered by Fire and Passion</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
