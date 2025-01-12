@@ -4,29 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FireCastle Clan</title>
+    <meta name="description" content="FireCastle Clan: Analyze clans, track players, and explore attack strategies in Clash of Clans.">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
 </head>
 <body>
+    <div id="particles-js"></div>
     <header>
         <div class="logo">
-            <img src="images/clan-logo.png" alt="FireCastle Clan Logo" id="clan-logo">
+            <img src="images/clan-l.png" alt="FireCastle Clan Logo" id="clan-logo">
         </div>
         <nav>
             <ul>
-                <li><a href="#clan-search">Clan Search</a></li>
-                <li><a href="#player-search">Player Search</a></li>
-                <li><a href="#attack-strategies">Attack Strategies</a></li>
-                <li><a href="#application">Join Us</a></li>
-                <li><a href="#clanstadt">Clan Capital Guide</a></li>
-                <li><a href="#live-war-status">Live War Status</a></li>
-                <li><a href="#about-us">About Us</a></li>
+                <li><a href="#clan-search" aria-label="Navigate to Clan Search section">Clan Search</a></li>
+                <li><a href="#player-search" aria-label="Navigate to Player Search section">Player Search</a></li>
+                <li><a href="#attack-strategies" aria-label="Navigate to Attack Strategies section">Attack Strategies</a></li>
+                <li><a href="#application" aria-label="Navigate to Join Us section">Join Us</a></li>
+                <li><a href="#clanstadt" aria-label="Navigate to Clan Capital Guide section">Clan Capital Guide</a></li>
+                <li><a href="#live-war-status" aria-label="Navigate to Live War Status section">Live War Status</a></li>
+                <li><a href="#about-us" aria-label="Navigate to About Us section">About Us</a></li>
             </ul>
         </nav>
     </header>
     <main>
         <!-- Particle Background -->
-        <div id="particle-bg"></div>
+        <div id="particle-bg" aria-hidden="true"></div>
+        <noscript>
+            <p>Enable JavaScript to view the interactive background.</p>
+        </noscript>
 
         <!-- Scroll Progress Bar -->
         <div id="progress-bar-container">
@@ -65,12 +71,12 @@
         </section>
 
         <!-- Live War Status -->
-        <section id="live-war-status" class="dynamic-bg">
+        <article id="live-war-status" class="dynamic-bg">
             <h2>Live War Status</h2>
             <div id="war-status">
                 <p>Fetching live war data...</p>
             </div>
-        </section>
+        </article>
 
         <!-- Player Search -->
         <section id="player-search" class="dynamic-bg">
@@ -135,7 +141,7 @@
     <footer>
         <p>&copy; 2025 FireCastle Clan - Powered by Family and War, since 2014</p>
     </footer>
-
+    <script src="js/particles-config.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
