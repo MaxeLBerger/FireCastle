@@ -4,12 +4,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize progress bar
     const progressBar = document.getElementById('progress-bar');
+    if (!progressBar) {
+        console.error('Progress bar element not found!');
+        return;
+    }
+
     window.addEventListener('scroll', () => {
         const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
         const scrollTop = document.documentElement.scrollTop;
         const scrollPercent = (scrollTop / scrollHeight) * 100;
+
+        console.log(`Scroll Percentage: ${scrollPercent}%`); // Debugging log
         progressBar.style.width = `${scrollPercent}%`;
     });
+
+    // Test: Set progress bar width to 50% after 2 seconds
+    setTimeout(() => {
+        progressBar.style.width = '50%'; // Temporär für Debugging
+    }, 2000);
 
     // Fetch live war status on page load
     fetchLiveWarStatus();
@@ -88,5 +100,57 @@ async function fetchPlayerData() {
         }
     } catch (error) {
         console.error('Error fetching player data:', error);
+    }
+}
+
+async function handleSearch() {
+    const searchTag = document.getElementById('search-tag').value.trim();
+    const searchType = document.querySelector('input[name="searchType"]:checked').value;
+
+    if (!searchTag.startsWith('#')) {
+        alert('Please enter a valid tag starting with "#"');
+        return;
+    }
+
+    try {
+        const endpoint = searchType === 'clan' ? '/api/clan' : '/api/player';
+        const response = await fetch(`${endpoint}?tag=${encodeURIComponent(searchTag)}`);
+        const data = await response.json();
+
+        if (response.ok) {
+            displaySearchResult(data, searchType);
+        } else {
+            alert(`Error fetching ${searchType} data: ${data.error}`);
+        }
+    } catch (error) {
+        console.error(`Error fetching ${searchType} data:`, error);
+    }
+}
+
+function displaySearchResult(data, type) {
+    const resultContainer = document.getElementById('search-result');
+    resultContainer.innerHTML = ''; // Reset
+
+    if (type === 'clan') {
+        resultContainer.innerHTML = `
+            <h3>Clan Details</h3>
+            <img src="${data.badgeUrls?.medium || 'images/default-badge.png'}" alt="Clan Badge">
+            <p>Name: ${data.name}</p>
+            <p>Level: ${data.level}</p>
+            <p>Points: ${data.points}</p>
+            <p>Members: ${data.members}</p>
+            <p>War Winrate: ${data.warWinRate}</p>
+            <p>Description: ${data.description}</p>
+        `;
+    } else {
+        resultContainer.innerHTML = `
+            <h3>Player Details</h3>
+            <p>Name: ${data.name}</p>
+            <p>Level: ${data.level}</p>
+            <p>Trophies: ${data.trophies}</p>
+            <p>Donations: ${data.donations}</p>
+            <p>Attack Wins: ${data.attacks}</p>
+            <p>Defense Wins: ${data.defenses}</p>
+        `;
     }
 }

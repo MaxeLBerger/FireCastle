@@ -3,28 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FireCastle Clan</title>
+    <title>FireCastle</title>
     <meta name="description" content="FireCastle Clan: Analyze clans, track players, and explore attack strategies in Clash of Clans.">
-    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="images/clan-l.png" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
 </head>
 <body>
     <div id="particles-js"></div>
+    <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+    </div>
     <header>
-        <div class="logo">
-            <img src="images/clan-l.png" alt="FireCastle Clan Logo" id="clan-logo">
+        <div class="logo-container">
+            <img src="images/firecastleclan.png" alt="FireCastle Clan Logo" id="clan-logo">
         </div>
         <nav>
-            <ul>
-                <li><a href="#clan-search" aria-label="Navigate to Clan Search section">Clan Search</a></li>
-                <li><a href="#player-search" aria-label="Navigate to Player Search section">Player Search</a></li>
-                <li><a href="#attack-strategies" aria-label="Navigate to Attack Strategies section">Attack Strategies</a></li>
-                <li><a href="#application" aria-label="Navigate to Join Us section">Join Us</a></li>
-                <li><a href="#clanstadt" aria-label="Navigate to Clan Capital Guide section">Clan Capital Guide</a></li>
-                <li><a href="#live-war-status" aria-label="Navigate to Live War Status section">Live War Status</a></li>
-                <li><a href="#about-us" aria-label="Navigate to About Us section">About Us</a></li>
-            </ul>
+            <div class="menu-with-badge">
+                <img src="images/clan-l.png" alt="Clan Badge" id="menu-clan-badge">
+                <ul>
+                    <li><a href="#search" aria-label="Navigate to Search section">Search</a></li>
+                    <li><a href="#attack-strategies" aria-label="Navigate to Attack Strategies section">Attack Strategies</a></li>
+                    <li><a href="#application" aria-label="Navigate to Join Us section">Join Us</a></li>
+                    <li><a href="#clanstadt" aria-label="Navigate to Clan Capital Guide section">Clan Capital Guide</a></li>
+                    <li><a href="#live-war-status" aria-label="Navigate to Live War Status section">Live War Status</a></li>
+                    <li><a href="#about-us" aria-label="Navigate to About Us section">About Us</a></li>
+                </ul>
+            </div>
         </nav>
     </header>
     <main>
@@ -39,23 +44,24 @@
             <div id="progress-bar"></div>
         </div>
 
-        <!-- Clan Search Section -->
-        <section id="clan-search" class="dynamic-bg">
-            <h2>Search for a Clan</h2>
-            <form onsubmit="fetchClanData(); return false;">
-                <label for="clan-tag">Clan Tag:</label>
-                <input type="text" id="clan-tag" placeholder="#P9QGQLPU" value="#P9QGQLPU" required>
-                <button type="submit">Search Clan</button>
+        <!-- Combined Search Section -->
+        <section id="search" class="dynamic-bg">
+            <h2>Search</h2>
+            <div class="search-type-toggle">
+                <label>
+                    <input type="radio" name="searchType" value="clan" checked> Clan Search
+                </label>
+                <label>
+                    <input type="radio" name="searchType" value="player"> Player Search
+                </label>
+            </div>
+            <form id="search-form" onsubmit="handleSearch(); return false;">
+                <label for="search-tag">Tag:</label>
+                <input type="text" id="search-tag" placeholder="#P9QGQLPU" value="#P9QGQLPU" required>
+                <button type="submit">Search</button>
             </form>
-            <div id="clan-result">
-                <h3>Clan Details</h3>
-                <img id="clan-badge" src="images/default-badge.png" alt="Clan Badge">
-                <p id="clan-name">Name: <span></span></p>
-                <p id="clan-level">Level: <span></span></p>
-                <p id="clan-points">Points: <span></span></p>
-                <p id="clan-members">Members: <span></span></p>
-                <p id="clan-warwinrate">War Winrate: <span></span></p>
-                <p id="clan-description">Description: <span></span></p>
+            <div id="search-result">
+                <!-- Dynamische Suchergebnisse -->
             </div>
         </section>
 
@@ -77,25 +83,6 @@
                 <p>Fetching live war data...</p>
             </div>
         </article>
-
-        <!-- Player Search -->
-        <section id="player-search" class="dynamic-bg">
-            <h2>Search for a Player</h2>
-            <form onsubmit="fetchPlayerData(); return false;">
-                <label for="player-tag">Player Tag:</label>
-                <input type="text" id="player-tag" placeholder="#12345ABC" required>
-                <button type="submit">Search Player</button>
-            </form>
-            <div id="player-result">
-                <h3>Player Details</h3>
-                <p id="player-name">Name: <span></span></p>
-                <p id="player-level">Level: <span></span></p>
-                <p id="player-trophies">Trophies: <span></span></p>
-                <p id="player-donations">Donations: <span></span></p>
-                <p id="player-attacks">Attack Wins: <span></span></p>
-                <p id="player-defenses">Defense Wins: <span></span></p>
-            </div>
-        </section>
 
         <!-- Attack Strategies -->
         <section id="attack-strategies" class="static-bg">
