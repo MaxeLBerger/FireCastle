@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FireCastle</title>
-    <meta name="description" content="FireCastle Clan: Analyze clans, track players, and explore attack strategies in Clash of Clans.">
+    <meta name="description" content="FireCastle Clan: Analysiere Clans, verfolge Spieler und erkunde Angriffstrategien in Clash of Clans.">
     <link rel="icon" href="images/clan-l.png" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
@@ -20,73 +20,73 @@
         </div>
         <nav>
             <div class="menu-with-badge">
-                <img src="images/clan-l.png" alt="Clan Badge" id="menu-clan-badge">
+                <img src="images/clan-l.png" alt="Clan-Abzeichen" id="clan-badge">
                 <ul>
-                    <li><a href="#search" aria-label="Navigate to Search section">Search</a></li>
-                    <li><a href="#attack-strategies" aria-label="Navigate to Attack Strategies section">Attack Strategies</a></li>
-                    <li><a href="#application" aria-label="Navigate to Join Us section">Join Us</a></li>
-                    <li><a href="#clanstadt" aria-label="Navigate to Clan Capital Guide section">Clan Capital Guide</a></li>
-                    <li><a href="#live-war-status" aria-label="Navigate to Live War Status section">Live War Status</a></li>
-                    <li><a href="#about-us" aria-label="Navigate to About Us section">About Us</a></li>
+                    <li><a href="#search" aria-label="Navigiere zum Suchbereich" data-i18n="menu_search">Suche</a></li>
+                    <li><a href="#attack-strategies" aria-label="Navigiere zu Angriffstrategien" data-i18n="menu_attack_strategies">Angriffstrategien</a></li>
+                    <li><a href="#application" aria-label="Navigiere zum Bereich Beitreten" data-i18n="menu_join_us">Beitreten</a></li>
+                    <li><a href="#clanstadt" aria-label="Navigiere zum Clan-Hauptstadt-Leitfaden" data-i18n="menu_clan_capital_guide">Clan-Hauptstadt-Leitfaden</a></li>
+                    <li><a href="#live-war-status" aria-label="Navigiere zum Live-Krieg-Status" data-i18n="menu_live_war_status">Live-Krieg-Status</a></li>
+                    <li><a href="#about-us" aria-label="Navigiere zum Bereich Über uns" data-i18n="menu_about_us">Über uns</a></li>
                 </ul>
+                <!-- Sprachumschalter hinzufügen -->
+                <div class="language-toggle">
+                    <button id="lang-en" class="lang-btn active">EN</button>
+                    <button id="lang-de" class="lang-btn">DE</button>
+                </div>
             </div>
         </nav>
     </header>
     <main>
-        <!-- Particle Background -->
+        <!-- Particle Hintergrund -->
         <div id="particle-bg" aria-hidden="true"></div>
         <noscript>
-            <p>Enable JavaScript to view the interactive background.</p>
+            <p data-i18n="noscript_message">Aktiviere JavaScript, um den interaktiven Hintergrund anzuzeigen.</p>
         </noscript>
 
-        <!-- Scroll Progress Bar -->
-        <div id="progress-bar-container">
-            <div id="progress-bar"></div>
-        </div>
-
-        <!-- Combined Search Section -->
+        <!-- Kombinierter Suchbereich -->
         <section id="search" class="dynamic-bg">
-            <h2>Search</h2>
+            <h2 data-i18n="section_search">Suche</h2>
             <div class="search-type-toggle">
                 <label>
-                    <input type="radio" name="searchType" value="clan" checked> Clan Search
+                    <input type="radio" name="searchType" value="clan" checked> <span data-i18n="search_clan">Clan-Suche</span>
                 </label>
                 <label>
-                    <input type="radio" name="searchType" value="player"> Player Search
+                    <input type="radio" name="searchType" value="player"> <span data-i18n="search_player">Spieler-Suche</span>
                 </label>
             </div>
             <form id="search-form" onsubmit="handleSearch(); return false;">
-                <label for="search-tag">Tag:</label>
+                <label for="search-tag" data-i18n="label_tag">Tag:</label>
                 <input type="text" id="search-tag" placeholder="#P9QGQLPU" value="#P9QGQLPU" required>
-                <button type="submit">Search</button>
+                <button type="submit" data-i18n="button_search">Suchen</button>
             </form>
             <div id="search-result">
                 <!-- Dynamische Suchergebnisse -->
             </div>
         </section>
 
-        <!-- Clan Capital Guide -->
+        <!-- Clan-Hauptstadt-Leitfaden -->
         <section id="clanstadt" class="static-bg">
-            <h2>Clan Capital Guide</h2>
-            <p>Learn how to build the best Clan Capital layouts and strategies:</p>
+            <h2 data-i18n="section_clan_capital_guide">Clan-Hauptstadt-Leitfaden</h2>
+            <p data-i18n="clan_capital_intro">Lerne, wie du die besten Clan-Hauptstadt-Layouts und -Strategien erstellst:</p>
             <ul>
-                <li>Optimal layouts for Capital Hall levels</li>
-                <li>Attack strategies for Capital Raids</li>
-                <li>Tips for upgrading and managing districts</li>
+                <li data-i18n="clan_capital_optimal_layouts">Optimale Layouts für Capital Hall-Level</li>
+                <li data-i18n="clan_capital_attack_strategies">Angriffstrategien für Capital Raids</li>
+                <li data-i18n="clan_capital_tips">Tipps zum Aufrüsten und Verwalten von Distrikten</li>
             </ul>
         </section>
 
-        <!-- Live War Status -->
-        <article id="live-war-status" class="dynamic-bg">
-            <h2>Live War Status</h2>
+        <!-- Live-Krieg-Status -->
+        <section id="live-war-status" class="dynamic-bg war-status-container">
+            <h2 data-i18n="section_live_war_status">Live-Krieg-Status</h2>
             <div id="war-status">
-                <p>Fetching live war data...</p>
+                <p data-i18n="live_war_fetching">Live-Krieg-Daten werden abgerufen...</p>
             </div>
-        </article>
+        </section>
 
-        <!-- Attack Strategies -->
+        <!-- Angriffstrategien -->
         <section id="attack-strategies" class="static-bg">
-            <h2>Attack Strategies</h2>
+            <h2 data-i18n="section_attack_strategies">Angriffstrategien</h2>
             <ul>
                 <li>Root Rider</li>
                 <li>Dragons</li>
@@ -95,40 +95,41 @@
             </ul>
         </section>
 
-        <!-- Application Form -->
+        <!-- Bewerbungsformular -->
         <section id="application" class="static-bg">
-            <h2>Join FireCastle Clan</h2>
+            <h2 data-i18n="section_join_firecastle">FireCastle Clan beitreten</h2>
             <form>
-                <label for="name">Name:</label>
+                <label for="name" data-i18n="label_name">Name:</label>
                 <input type="text" id="name" name="name" required>
-                <label for="age">Age:</label>
+                <label for="age" data-i18n="label_age">Alter:</label>
                 <input type="number" id="age" name="age" required>
-                <label for="player-tag">Player Tag:</label>
+                <label for="player-tag" data-i18n="label_player_tag">Spieler-Tag:</label>
                 <input type="text" id="player-tag" name="player-tag" required>
-                <label for="townhall-level">Town Hall Level:</label>
+                <label for="townhall-level" data-i18n="label_townhall_level">Town Hall Level:</label>
                 <input type="number" id="townhall-level" name="townhall-level" required>
-                <label for="war-stars">War Stars:</label>
+                <label for="war-stars" data-i18n="label_war_stars">Krieg-Sterne:</label>
                 <input type="number" id="war-stars" name="war-stars" required>
-                <label for="best-ranking">Best Ranking (optional):</label>
+                <label for="best-ranking" data-i18n="label_best_ranking">Bestes Ranking (optional):</label>
                 <input type="text" id="best-ranking" name="best-ranking">
-                <button type="submit">Apply Now</button>
+                <button type="submit" data-i18n="button_apply_now">Jetzt bewerben</button>
             </form>
         </section>
 
-        <!-- About Us -->
+        <!-- Über uns -->
         <section id="about-us" class="static-bg">
-            <h2>About FireCastle Clan</h2>
-            <p>Welcome to FireCastle Clan! We are a passionate group of players aiming for victory in Clash of Clans.</p>
-            <p>Clan Leaders: Maxii & Susanne</p>
-            <p>Co-Leaders: Mike, Kai und Aydin</p>
-            <p>Join us to experience epic battles, strategic gameplay, and a fun, active community and a lot of Wins!</p>
+            <h2 data-i18n="section_about_us">Über FireCastle Clan</h2>
+            <p data-i18n="about_us_intro">Willkommen beim FireCastle Clan! Wir sind eine leidenschaftliche Gruppe von Spielern, die nach Siegen in Clash of Clans streben.</p>
+            <p data-i18n="about_us_leaders">Clanleiter: Maxii & Susanne</p>
+            <p data-i18n="about_us_co_leaders">Co-Leader: Mike, Kai und Aydin</p>
+            <p data-i18n="about_us_join">Tritt uns bei, um epische Schlachten, strategisches Gameplay und eine lustige, aktive Community mit vielen Siegen zu erleben!</p>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2025 FireCastle Clan - Powered by Family and War, since 2014</p>
+        <p data-i18n="footer_text">&copy; 2025 FireCastle Clan - Powered by Familie und Krieg, seit 2014</p>
     </footer>
     <script src="js/particles-config.js"></script>
+    <script src="js/language.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
