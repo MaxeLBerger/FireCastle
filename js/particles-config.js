@@ -1,7 +1,8 @@
+/* /js/particles-config.js */
 particlesJS("particles-js", {
     particles: {
         number: {
-            value: 100,
+            value: 140, // Reduzierte Anzahl für besseren Repulsions-Effekt
             density: {
                 enable: true,
                 value_area: 800
@@ -49,7 +50,7 @@ particlesJS("particles-js", {
         },
         move: {
             enable: true,
-            speed: 2,
+            speed: 3, // Erhöhte Geschwindigkeit
             direction: "none",
             random: false,
             straight: false,
@@ -67,11 +68,11 @@ particlesJS("particles-js", {
         events: {
             onhover: {
                 enable: true,
-                mode: "grab"
+                mode: "repulse" // Repulsionsmodus aktiviert
             },
             onclick: {
                 enable: true,
-                mode: "push"
+                mode: "push" // Partikel beim Klicken hinzufügen
             },
             resize: true
         },
@@ -90,8 +91,8 @@ particlesJS("particles-js", {
                 speed: 3
             },
             repulse: {
-                distance: 200,
-                duration: 0.4
+                distance: 160, // Größere Distanz für stärkeren Repulsions-Effekt
+                duration: 0.6  // Längere Dauer
             },
             push: {
                 particles_nb: 4

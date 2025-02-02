@@ -1,4 +1,4 @@
-// language.js
+// /js/language.js
 
 window.translations = {
     en: {

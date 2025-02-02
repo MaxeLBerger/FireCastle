@@ -1,4 +1,4 @@
-// script.js
+// /js/script.js
 
 document.addEventListener('DOMContentLoaded', () => {
     // Dynamically fetch default clan data

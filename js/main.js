@@ -1,3 +1,5 @@
+// /js/main.js
+
 document.addEventListener("DOMContentLoaded", () => {
     const progressBar = document.getElementById("progress-bar");
 

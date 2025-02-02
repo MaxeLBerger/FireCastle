@@ -1,4 +1,4 @@
-/* style.css */
+/* /css/style.css */
 
 /* Global Styles */
 :root {
@@ -34,10 +34,11 @@ body {
     height: 100%;
     top: 0;
     left: 0;
-    z-index: -1; /* Bleibt im Hintergrund */
+    z-index: 0; /* Bleibt im Hintergrund */
     background-color: var(--background-color, #1a1a1a);
     overflow: hidden;
 }
+
 
 /* Header Styles */
 header {
@@ -57,13 +58,13 @@ header {
 .logo-container {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 10px
 }
 
 .logo-container img {
     height: 60px;
     width: auto;
-    max-width: 100px; /* Maximale Breite festlegen */
+    max-width: 250px; /* Maximale Breite festlegen */
 }
 
 nav {
