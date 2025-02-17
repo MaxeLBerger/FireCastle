@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FireCastle - Über uns</title>
+  <meta name="description" content="Lerne den FireCastle Clan kennen.">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div id="progress-bar-container">
+    <div id="progress-bar"></div>
+  </div>
+  <header>
+    <div class="logo-container">
+      <img src="../images/firecastleclan.png" alt="FireCastle Clan Logo" id="clan-logo">
+    </div>
+    <nav>
+      <div class="menu-with-badge">
+        <img src="../images/clan-l.png" alt="Clan-Abzeichen" id="clan-badge">
+        <ul>
+          <li><a href="clanSearch.html" data-i18n="menu_search">Suche</a></li>
+          <li><a href="attackstrategies.html" data-i18n="menu_attack_strategies">Angriffstrategien</a></li>
+          <li><a href="application.html" data-i18n="menu_join_us">Bewerben</a></li>
+          <li><a href="clanCapital.html" data-i18n="menu_clan_capital_guide">Clan-Stadt-Guide</a></li>
+          <li><a href="livewarStatus.html" data-i18n="menu_live_war_status">Live-Krieg-Status</a></li>
+          <li><a href="aboutUs.html" data-i18n="menu_about_us">Über uns</a></li>
+        </ul>
+        <div class="language-toggle">
+          <button id="lang-en" class="lang-btn">EN</button>
+          <button id="lang-de" class="lang-btn">DE</button>
+          <!-- Neuer Farbschalter -->
+          <button id="color-toggle" class="color-btn">Farben</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <section id="about-us">
+      <h2 data-i18n="section_about_us">Über FireCastle Clan</h2>
+      <p data-i18n="about_us_intro">Willkommen beim FireCastle Clan! Wir sind eine leidenschaftliche Gruppe von Spielern, die nach Siegen in Clash of Clans streben.</p>
+      <p data-i18n="about_us_leaders">Clanleiter: Maxii &amp; Susanne</p>
+      <p data-i18n="about_us_co_leaders">Co-Leader: Mike, Kai und Aydin</p>
+      <p data-i18n="about_us_join">Tritt uns bei, um epische Schlachten, strategisches Gameplay und eine lustige, aktive Community mit vielen Siegen zu erleben!</p>
+    </section>
+  </main>
+  <footer>
+    <p data-i18n="footer_text">&copy; 2025 FireCastle Clan - Powered by Familie und Krieg, seit 2014</p>
+  </footer>
+  
+  <!-- Farbpalette (UI für den Farbschalter) -->
+  <div id="color-palette" style="display: none; position: absolute; top: 60px; right: 10px; background: #333; padding: 10px; border-radius: 8px; z-index: 1001;">
+    <label>
+      Primärfarbe:
+      <input type="color" id="primary-color-picker" value="#ff4500">
+    </label>
+    <label>
+      Akzentfarbe:
+      <input type="color" id="accent-color-picker" value="#ff6347">
+    </label>
+    <label>
+      Hintergrundfarbe:
+      <input type="color" id="background-color-picker" value="#1a1a1a">
+    </label>
+  </div>
+  
+  <!-- Skripte -->
+  <script src="../js/particles-config.js"></script>
+  <script src="../js/language.js"></script>
+  <script src="../js/script.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/color.js"></script>
+</body>
+</html>

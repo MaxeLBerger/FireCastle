@@ -1,35 +1,41 @@
-// /js/script.js
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Dynamically fetch default clan data
-    fetchClanData('#P9QGQLPU');
-
     // Initialize progress bar
-    const progressBar = document.getElementById('progress-bar');
-    if (!progressBar) {
-        console.error('Progress bar element not found!');
-        return;
+    const progressBar = document.getElementById("progress-bar");
+    if (progressBar) {
+        window.addEventListener("scroll", () => {
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+            console.log(`Scroll Percentage: ${scrollPercent}%`); // Debug log
+            progressBar.style.width = `${scrollPercent}%`;
+        });
+    } else {
+        console.warn("Progress bar element not found!");
     }
 
-    window.addEventListener('scroll', () => {
-        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const scrollTop = document.documentElement.scrollTop;
-        const scrollPercent = (scrollTop / scrollHeight) * 100;
+    // Nur ausführen, wenn der entsprechende Container existiert
 
-        console.log(`Scroll Percentage: ${scrollPercent}%`); // Debugging log
-        progressBar.style.width = `${scrollPercent}%`;
-    });
+    // Wenn ein Element mit id "search-result" existiert, rufe fetchClanData auf
+    if (document.getElementById('search-result')) {
+        fetchClanData('#P9QGQLPU');
+    } else {
+        console.warn("Search result container not found – überspringe fetchClanData.");
+    }
 
-    // Fetch live war status on page load
-    fetchLiveWarStatus();
+    // Wenn ein Element mit id "war-status" existiert, rufe fetchLiveWarStatus auf
+    if (document.getElementById('war-status')) {
+        fetchLiveWarStatus();
+    } else {
+        console.warn("War status container not found – überspringe fetchLiveWarStatus.");
+    }
 });
 
 // Fetch Clan Data
 async function fetchClanData(clanTag = '') {
-    const tag = clanTag || document.getElementById('search-tag').value.trim();
+    const tag = clanTag || (document.getElementById('search-tag') && document.getElementById('search-tag').value.trim());
     console.log(`Fetching clan data for tag: ${tag}`);
 
-    if (!tag.startsWith('#')) {
+    if (!tag || !tag.startsWith('#')) {
         alert(t('alert_invalid_clan_tag'));
         return;
     }
@@ -37,7 +43,6 @@ async function fetchClanData(clanTag = '') {
     try {
         const response = await fetch(`/api/clan?tag=${encodeURIComponent(tag)}`);
         const data = await response.json();
-
         console.log('Clan data fetched:', data);
 
         if (response.ok) {
@@ -72,7 +77,6 @@ async function fetchLiveWarStatus() {
     try {
         const response = await fetch('/api/clanwar');
         const data = await response.json();
-
         console.log('Live war status fetched:', data);
 
         if (response.ok) {
@@ -103,7 +107,8 @@ async function fetchLiveWarStatus() {
 
 // Fetch Player Data
 async function fetchPlayerData() {
-    const playerTag = document.getElementById('player-tag').value.trim();
+    const playerTagEl = document.getElementById('player-tag');
+    const playerTag = playerTagEl ? playerTagEl.value.trim() : '';
     console.log(`Fetching player data for tag: ${playerTag}`);
 
     if (!playerTag.startsWith('#')) {
@@ -114,7 +119,6 @@ async function fetchPlayerData() {
     try {
         const response = await fetch(`/api/player?tag=${encodeURIComponent(playerTag)}`);
         const data = await response.json();
-
         console.log('Player data fetched:', data);
 
         if (response.ok) {
@@ -145,9 +149,10 @@ async function fetchPlayerData() {
 
 // Funktion zur Handhabung der Suche
 async function handleSearch() {
-    const searchTag = document.getElementById('search-tag').value.trim();
-    const searchType = document.querySelector('input[name="searchType"]:checked').value;
-
+    const searchTagEl = document.getElementById('search-tag');
+    const searchTag = searchTagEl ? searchTagEl.value.trim() : '';
+    const searchTypeEl = document.querySelector('input[name="searchType"]:checked');
+    const searchType = searchTypeEl ? searchTypeEl.value : '';
     console.log(`Handling search for type: ${searchType} with tag: ${searchTag}`);
 
     if (!searchTag.startsWith('#')) {
@@ -159,7 +164,6 @@ async function handleSearch() {
         const endpoint = searchType === 'clan' ? '/api/clan' : '/api/player';
         const response = await fetch(`${endpoint}?tag=${encodeURIComponent(searchTag)}`);
         const data = await response.json();
-
         console.log(`Search result for ${searchType}:`, data);
 
         if (response.ok) {

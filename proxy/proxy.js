@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = 8080;
 
 // Enable CORS
 app.use(cors());
@@ -23,10 +23,12 @@ app.use((req, res, next) => {
     next();
 });
 
-// Serve static files for CSS, JS, and images
+// Serve static files for CSS, JS, images und pages
 app.use('/css', express.static(path.join(__dirname, '..', 'css')));
 app.use('/js', express.static(path.join(__dirname, '..', 'js')));
 app.use('/images', express.static(path.join(__dirname, '..', 'images')));
+app.use('/pages', express.static(path.join(__dirname, '..', 'pages')));
+
 
 // Serve the index.html file for the root route
 app.get('/', (req, res) => {
