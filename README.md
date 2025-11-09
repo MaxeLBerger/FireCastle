@@ -210,3 +210,4 @@ curl "http://localhost:3000/api/player/stats?tag=%23TESTPLAYER"
 
 ## Lizenz
 Dieses Projekt ist unter der MIT-Lizenz veröffentlicht.
+Test auto-update
