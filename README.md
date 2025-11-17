@@ -22,10 +22,17 @@ FireCastle ist ein Node.js-Projekt, das API-Endpunkte für Clash of Clans bereit
    ```
 
 3. **Umgebungsvariablen einrichten:**
-   Erstelle eine `.env`-Datei im Stammverzeichnis und füge deinen Clash of Clans API-Schlüssel hinzu:
-   ```env
-   API_TOKEN=<dein_api_token>
-   ```
+  Erstelle eine `.env`-Datei im Stammverzeichnis (siehe `.env.example`) und füge deinen Clash of Clans API-Schlüssel hinzu:
+  ```env
+  API_TOKEN=<dein_api_token>
+  API_BASE_URL=https://api.clashofclans.com/v1
+  PORT=3000
+  # Optional: CORS erlaubte Origins (nur Origin, ohne Pfad), kommasepariert
+  # Beispiel korrekt: https://maximilianhaak.de,http://localhost:3000
+  # Beispiel falsch (mit Pfad): https://maximilianhaak.de/FireCastle
+  CORS_ORIGINS=https://maximilianhaak.de,http://localhost:3000
+  LOG_LEVEL=info
+  ```
 
 4. **Server starten:**
    ```bash
@@ -33,6 +40,28 @@ FireCastle ist ein Node.js-Projekt, das API-Endpunkte für Clash of Clans bereit
    ```
 
    Der Server wird auf `http://localhost:3000` laufen.
+
+## Sicherheit und API-Keys (wichtig)
+
+- Leake niemals deinen API-Key im Quellcode oder im Browser. Hinterlege ihn ausschließlich als Umgebungsvariable (`API_TOKEN`) auf dem Server.
+- Die Supercell/Clash of Clans API ist per IP-Whitelist geschützt. Du musst in der Developer Console die öffentliche IP deines Backends hinterlegen. Dynos/Server ohne feste Ausgangs-IP (z. B. Free-Tier) funktionieren i. d. R. nicht zuverlässig.
+- Empfohlene Optionen für eine feste Ausgangs-IP:
+  - Eigenen Server/VPS (Hetzner, DO, etc.) betreiben und diese IP whitelisten.
+  - PaaS mit statischer Egress-IP nutzen (z. B. QuotaGuard Static/Proxies).
+- Wenn ein Key versehentlich öffentlich wurde, lösche ihn sofort und erstelle einen neuen.
+
+## Deployment unter maximilianhaak.de/FireCastle/
+
+Dieses Projekt kann sowohl das Frontend (statische Dateien) als auch die API-Endpunkte ausliefern:
+
+- Der Node-Server (`index.js`) bedient `/api/...` sowie statische Assets (`/css`, `/js`, `/images`, `/pages`) und `index.html`.
+- Das Procfile startet nun `node index.js`.
+
+Varianten:
+- Vollständig auf einem Server hosten (Empfehlung): Domain/Reverse Proxy → Node-App. Dann funktionieren relative Calls wie `/api/clan` direkt.
+- Frontend z. B. via GitHub Pages unter `/FireCastle` und Backend separat hosten: Dann im Frontend eine Basis-URL konfigurieren (oder Reverse Proxy einrichten), damit Requests an dein Backend gehen.
+
+## Tests und Entwicklung
 
 ## Tests
 
@@ -210,4 +239,4 @@ curl "http://localhost:3000/api/player/stats?tag=%23TESTPLAYER"
 
 ## Lizenz
 Dieses Projekt ist unter der MIT-Lizenz veröffentlicht.
-Test auto-update
+ 

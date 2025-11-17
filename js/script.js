@@ -1,32 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize progress bar
-    const progressBar = document.getElementById("progress-bar");
-    if (progressBar) {
-        window.addEventListener("scroll", () => {
-            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollTop = document.documentElement.scrollTop;
-            const scrollPercent = (scrollTop / scrollHeight) * 100;
-            console.log(`Scroll Percentage: ${scrollPercent}%`); // Debug log
-            progressBar.style.width = `${scrollPercent}%`;
-        });
-    } else {
-        console.warn("Progress bar element not found!");
-    }
-
     // Nur ausführen, wenn der entsprechende Container existiert
-
-    // Wenn ein Element mit id "search-result" existiert, rufe fetchClanData auf
     if (document.getElementById('search-result')) {
         fetchClanData('#P9QGQLPU');
-    } else {
-        console.warn("Search result container not found – überspringe fetchClanData.");
     }
 
-    // Wenn ein Element mit id "war-status" existiert, rufe fetchLiveWarStatus auf
     if (document.getElementById('war-status')) {
         fetchLiveWarStatus();
-    } else {
-        console.warn("War status container not found – überspringe fetchLiveWarStatus.");
     }
 });
 
