@@ -24,7 +24,12 @@ const getPlayerDetails = async (req, res) => {
     return res.json(extendedData);
   } catch (error) {
     logger.error(`Error fetching player data: ${error.message}`);
-    return res.status(500).json({ error: 'Failed to fetch player data' });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ 
+      error: 'Failed to fetch player data',
+      details: error.message,
+      type: error.type || 'UNKNOWN'
+    });
   }
 };
 
@@ -50,7 +55,12 @@ const getPlayerStats = async (req, res) => {
     return res.json(stats);
   } catch (error) {
     logger.error(`Error fetching player stats: ${error.message}`);
-    return res.status(500).json({ error: 'Failed to fetch player stats' });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ 
+      error: 'Failed to fetch player stats',
+      details: error.message,
+      type: error.type || 'UNKNOWN'
+    });
   }
 };
 

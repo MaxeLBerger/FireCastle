@@ -52,7 +52,11 @@ describe('Player Routes', () => {
 
         const response = await request(app).get('/api/player').query({ tag: '#INVALIDPLAYER' });
         expect(response.statusCode).toBe(500);
-        expect(response.body).toEqual({ error: 'Failed to fetch player data' });
+        expect(response.body).toEqual({ 
+            error: 'Failed to fetch player data',
+            details: 'API Error',
+            type: 'UNKNOWN'
+        });
 
         console.error.mockRestore();
     });

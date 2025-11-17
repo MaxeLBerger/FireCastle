@@ -55,7 +55,11 @@ describe('Clan War Routes', () => {
 
         const response = await request(app).get('/api/clanwar').query({ tag: '#INVALIDCLAN' });
         expect(response.statusCode).toBe(500);
-        expect(response.body).toEqual({ error: 'Failed to fetch live war status' });
+        expect(response.body).toEqual({ 
+            error: 'Failed to fetch live war status',
+            details: 'API Error',
+            type: 'UNKNOWN'
+        });
 
         console.error.mockRestore();
     });

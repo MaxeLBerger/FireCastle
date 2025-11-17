@@ -20,7 +20,12 @@ const getClanWarStatus = async (req, res) => {
     });
   } catch (error) {
     logger.error(`Error fetching live war status: ${error.message}`);
-    return res.status(500).json({ error: 'Failed to fetch live war status' });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ 
+      error: 'Failed to fetch live war status',
+      details: error.message,
+      type: error.type || 'UNKNOWN'
+    });
   }
 };
 
