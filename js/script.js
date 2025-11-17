@@ -1,3 +1,6 @@
+// Determine API base from a meta tag; fallback to same-origin /api
+const API_BASE = (document.querySelector('meta[name="firecastle-api-base"]')?.content || '/api').replace(/\/$/, '');
+
 document.addEventListener('DOMContentLoaded', () => {
     // Nur ausführen, wenn der entsprechende Container existiert
     if (document.getElementById('search-result')) {
@@ -20,8 +23,9 @@ async function fetchClanData(clanTag = '') {
     }
 
     try {
-        const response = await fetch(`/api/clan?tag=${encodeURIComponent(tag)}`);
-        const data = await response.json();
+    const response = await fetch(`${API_BASE}/clan?tag=${encodeURIComponent(tag)}`);
+    const contentType = response.headers.get('content-type') || '';
+    const data = contentType.includes('application/json') ? await response.json() : { error: await response.text() };
         console.log('Clan data fetched:', data);
 
         if (response.ok) {
@@ -54,8 +58,9 @@ async function fetchClanData(clanTag = '') {
 async function fetchLiveWarStatus() {
     console.log('Fetching live war status...');
     try {
-        const response = await fetch('/api/clanwar');
-        const data = await response.json();
+    const response = await fetch(`${API_BASE}/clanwar`);
+    const contentType = response.headers.get('content-type') || '';
+    const data = contentType.includes('application/json') ? await response.json() : { error: await response.text() };
         console.log('Live war status fetched:', data);
 
         if (response.ok) {
@@ -96,8 +101,9 @@ async function fetchPlayerData() {
     }
 
     try {
-        const response = await fetch(`/api/player?tag=${encodeURIComponent(playerTag)}`);
-        const data = await response.json();
+    const response = await fetch(`${API_BASE}/player?tag=${encodeURIComponent(playerTag)}`);
+    const contentType = response.headers.get('content-type') || '';
+    const data = contentType.includes('application/json') ? await response.json() : { error: await response.text() };
         console.log('Player data fetched:', data);
 
         if (response.ok) {
@@ -140,9 +146,10 @@ async function handleSearch() {
     }
 
     try {
-        const endpoint = searchType === 'clan' ? '/api/clan' : '/api/player';
-        const response = await fetch(`${endpoint}?tag=${encodeURIComponent(searchTag)}`);
-        const data = await response.json();
+    const endpoint = searchType === 'clan' ? `${API_BASE}/clan` : `${API_BASE}/player`;
+    const response = await fetch(`${endpoint}?tag=${encodeURIComponent(searchTag)}`);
+    const contentType = response.headers.get('content-type') || '';
+    const data = contentType.includes('application/json') ? await response.json() : { error: await response.text() };
         console.log(`Search result for ${searchType}:`, data);
 
         if (response.ok) {
