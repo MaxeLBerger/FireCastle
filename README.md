@@ -50,6 +50,36 @@ FireCastle ist ein Node.js-Projekt, das API-Endpunkte für Clash of Clans bereit
   - PaaS mit statischer Egress-IP nutzen (z. B. QuotaGuard Static/Proxies).
 - Wenn ein Key versehentlich öffentlich wurde, lösche ihn sofort und erstelle einen neuen.
 
+### IP-Whitelist: Egress-IP zuverlässig ermitteln
+
+Ermittle die ausgehende öffentliche IPv4 deines Backends und trage sie im Supercell Developer Portal ein:
+
+- Linux/macOS (Shell):
+  - Optional
+    curl https://api.ipify.org
+  - Optional
+    curl https://ifconfig.me
+- Windows (PowerShell):
+  - Optional
+    Invoke-RestMethod -Uri "https://api.ipify.org"
+
+Hinweise:
+- Bei PaaS-Providern unterscheidet sich die Egress-IP oft von der Instanz-IP. Prüfe die Doku deines Anbieters (Stichworte: "static egress IP", "NAT gateway").
+- Bei Lastverteilern/Proxies kann die Egress-IP eine vom Gateway sein.
+- Änderungen der IP erfordern ein Update der Whitelist, sonst schlagen Requests mit 403 fehl.
+
+### Alternative ohne eigene statische IP: RoyaleAPI Proxy
+
+Wenn du keine statische Ausgangs-IP bereitstellen kannst, kannst du den Proxy von RoyaleAPI nutzen:
+
+1) Erstelle einen API-Key im offiziellen Portal und whitelist die Proxy-IP.
+2) Ersetze die Basis-URL der API:
+   - Clash of Clans: `https://api.clashofclans.com` → `https://cocproxy.royaleapi.dev`
+
+Quelle und Details: https://docs.royaleapi.com/proxy.html
+
+Hinweis: Die in der Doku genannte Whitelist-IP (z. B. `45.79.218.79` für CR) kann sich ändern. Prüfe die verlinkte Seite für die aktuell gültige IP und Hinweise für Clash of Clans.
+
 ## Deployment unter maximilianhaak.de/FireCastle/
 
 Dieses Projekt kann sowohl das Frontend (statische Dateien) als auch die API-Endpunkte ausliefern:
