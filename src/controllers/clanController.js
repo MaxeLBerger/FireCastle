@@ -27,7 +27,12 @@ const getClanDetails = async (req, res) => {
     return res.json(extendedData);
   } catch (error) {
     logger.error(`Error fetching clan data: ${error.message}`);
-    return res.status(500).json({ error: 'Failed to fetch clan data' });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ 
+      error: 'Failed to fetch clan data',
+      details: error.message,
+      type: error.type || 'UNKNOWN'
+    });
   }
 };
 
@@ -59,7 +64,12 @@ const getClanStats = async (req, res) => {
     });
   } catch (error) {
     logger.error(`Error fetching clan stats: ${error.message}`);
-    return res.status(500).json({ error: 'Failed to fetch clan stats' });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ 
+      error: 'Failed to fetch clan stats',
+      details: error.message,
+      type: error.type || 'UNKNOWN'
+    });
   }
 };
 

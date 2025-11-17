@@ -55,7 +55,11 @@ describe('Clan Routes', () => {
 
         const response = await request(app).get('/api/clan').query({ tag: '#INVALIDTAG' });
         expect(response.statusCode).toBe(500);
-        expect(response.body).toEqual({ error: 'Failed to fetch clan data' });
+        expect(response.body).toEqual({ 
+            error: 'Failed to fetch clan data',
+            details: 'API Error',
+            type: 'UNKNOWN'
+        });
 
         console.error.mockRestore();
     });

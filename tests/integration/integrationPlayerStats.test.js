@@ -46,7 +46,11 @@ describe('Integration Test: Player Stats API', () => {
         fetchFromAPI.mockRejectedValueOnce(new Error('API Error'));
         const response = await request(app).get('/api/player/stats').query({ tag: '#INVALIDPLAYER' });
         expect(response.statusCode).toBe(500);
-        expect(response.body).toEqual({ error: 'Failed to fetch player stats' });
+        expect(response.body).toEqual({ 
+            error: 'Failed to fetch player stats',
+            details: 'API Error',
+            type: 'UNKNOWN'
+        });
     });
 
     test('GET /api/player/stats without tag returns 400', async () => {

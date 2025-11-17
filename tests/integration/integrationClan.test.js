@@ -54,6 +54,10 @@ describe('Integration Test: Clan API', () => {
     fetchFromAPI.mockRejectedValueOnce(new Error('API Error'));
     const response = await request(app).get('/api/clan').query({ tag: '#INVALIDCLAN' });
     expect(response.statusCode).toBe(500);
-    expect(response.body).toEqual({ error: 'Failed to fetch clan data' });
+    expect(response.body).toEqual({ 
+        error: 'Failed to fetch clan data',
+        details: 'API Error',
+        type: 'UNKNOWN'
+    });
   });
 });
