@@ -1,5 +1,5 @@
-// Determine API base from a meta tag; fallback to same-origin /api
-const API_BASE = (document.querySelector('meta[name="firecastle-api-base"]')?.content || '/api').replace(/\/$/, '');
+// API Base URL - set by api-config.js or fallback to meta tag
+const API_BASE = (window.FIRECASTLE_API_BASE || document.querySelector('meta[name="firecastle-api-base"]')?.content || '/api').replace(/\/$/, '');
 
 document.addEventListener('DOMContentLoaded', () => {
     // Nur ausführen, wenn der entsprechende Container existiert
