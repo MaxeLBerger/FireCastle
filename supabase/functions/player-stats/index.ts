@@ -1,55 +1,57 @@
-﻿import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { fetchFromClashAPI, corsHeaders } from '../_shared/clashApi.ts'
+﻿import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
+import { getValidToken } from '../_shared/clashApi.ts';
+import { corsHeaders } from '../_shared/cors.ts';
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders() })
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const apiToken = Deno.env.get('CLASH_API_TOKEN')
-    if (!apiToken) {
-      throw new Error('CLASH_API_TOKEN not configured')
-    }
-
-    const url = new URL(req.url)
-    const playerTag = url.searchParams.get('tag')
+    const url = new URL(req.url);
+    const playerTag = url.searchParams.get('tag');
     
     if (!playerTag) {
-      return new Response(
-        JSON.stringify({ error: 'Player tag is required', type: 'VALIDATION_ERROR' }),
-        { headers: corsHeaders(), status: 400 }
-      )
+      throw new Error('Player tag is required');
     }
 
-    const playerData = await fetchFromClashAPI(`/players/${encodeURIComponent(playerTag)}`, apiToken)
-
-    // Calculate extended stats
-    const stats = {
-      ...playerData,
-      progress: {
-        expLevel: playerData.expLevel,
-        trophies: playerData.trophies,
-        bestTrophies: playerData.bestTrophies,
-        trophyProgress: playerData.trophies / playerData.bestTrophies * 100,
-        warStars: playerData.warStars,
-        attackWins: playerData.attackWins,
-        defenseWins: playerData.defenseWins
-      }
-    }
+    console.log('Fetching player stats for:', playerTag);
     
-    return new Response(
-      JSON.stringify(stats),
-      { headers: corsHeaders(), status: 200 }
-    )
+    const token = await getValidToken();
+    
+    const response = await fetch(`https://api.clashofclans.com/v1/players/${encodeURIComponent(playerTag)}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Clash API Error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    // Calculate additional stats
+    const stats = {
+      ...data,
+      attackWins: data.attackWins || 0,
+      defenseWins: data.defenseWins || 0,
+      donations: data.donations || 0,
+      donationsReceived: data.donationsReceived || 0,
+      clanRank: data.clanRank || 0
+    };
+    
+    return new Response(JSON.stringify(stats), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   } catch (error: any) {
-    console.error('Player Stats API Error:', error)
-    return new Response(
-      JSON.stringify({ 
-        error: error.message || 'Failed to fetch player stats',
-        type: error.type || 'UNKNOWN'
-      }),
-      { headers: corsHeaders(), status: error.statusCode || 500 }
-    )
+    console.error('Player Stats API Error:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
-})
+});

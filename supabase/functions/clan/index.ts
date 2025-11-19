@@ -1,33 +1,43 @@
-﻿import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { fetchFromClashAPI, corsHeaders } from '../_shared/clashApi.ts'
-
-const CLAN_TAG = Deno.env.get('CLASH_CLAN_TAG') || '%232Y0G2QC9J'
+﻿import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
+import { getValidToken } from '../_shared/clashApi.ts';
+import { corsHeaders } from '../_shared/cors.ts';
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders() })
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const apiToken = Deno.env.get('CLASH_API_TOKEN')
-    if (!apiToken) {
-      throw new Error('CLASH_API_TOKEN not configured')
+    const url = new URL(req.url);
+    const clanTag = url.searchParams.get('tag') || '#P9QGQLPU';
+
+    console.log('Fetching clan data for:', clanTag);
+    
+    const token = await getValidToken();
+    
+    const response = await fetch(`https://api.clashofclans.com/v1/clans/${encodeURIComponent(clanTag)}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Clash API Error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await fetchFromClashAPI(`/clans/${encodeURIComponent(CLAN_TAG)}`, apiToken)
+    const clanData = await response.json();
     
-    return new Response(
-      JSON.stringify(data),
-      { headers: corsHeaders(), status: 200 }
-    )
+    return new Response(JSON.stringify(clanData), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   } catch (error: any) {
-    console.error('Clan API Error:', error)
-    return new Response(
-      JSON.stringify({ 
-        error: error.message || 'Failed to fetch clan data',
-        type: error.type || 'UNKNOWN'
-      }),
-      { headers: corsHeaders(), status: error.statusCode || 500 }
-    )
+    console.error('Clan API Error:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
-})
+});

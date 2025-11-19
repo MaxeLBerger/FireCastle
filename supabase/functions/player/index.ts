@@ -1,41 +1,47 @@
-﻿import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { fetchFromClashAPI, corsHeaders } from '../_shared/clashApi.ts'
+﻿import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
+import { getValidToken } from '../_shared/clashApi.ts';
+import { corsHeaders } from '../_shared/cors.ts';
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders() })
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const apiToken = Deno.env.get('CLASH_API_TOKEN')
-    if (!apiToken) {
-      throw new Error('CLASH_API_TOKEN not configured')
-    }
-
-    const url = new URL(req.url)
-    const playerTag = url.searchParams.get('tag')
+    const url = new URL(req.url);
+    const playerTag = url.searchParams.get('tag');
     
     if (!playerTag) {
-      return new Response(
-        JSON.stringify({ error: 'Player tag is required', type: 'VALIDATION_ERROR' }),
-        { headers: corsHeaders(), status: 400 }
-      )
+      throw new Error('Player tag is required');
     }
 
-    const data = await fetchFromClashAPI(`/players/${encodeURIComponent(playerTag)}`, apiToken)
+    console.log('Fetching player data for:', playerTag);
     
-    return new Response(
-      JSON.stringify(data),
-      { headers: corsHeaders(), status: 200 }
-    )
+    const token = await getValidToken();
+    
+    const response = await fetch(`https://api.clashofclans.com/v1/players/${encodeURIComponent(playerTag)}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Clash API Error: ${response.status} ${response.statusText}`);
+    }
+
+    const playerData = await response.json();
+    
+    return new Response(JSON.stringify(playerData), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   } catch (error: any) {
-    console.error('Player API Error:', error)
-    return new Response(
-      JSON.stringify({ 
-        error: error.message || 'Failed to fetch player data',
-        type: error.type || 'UNKNOWN'
-      }),
-      { headers: corsHeaders(), status: error.statusCode || 500 }
-    )
+    console.error('Player API Error:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
-})
+});
