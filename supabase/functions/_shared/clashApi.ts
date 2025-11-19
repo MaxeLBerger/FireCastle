@@ -151,40 +151,66 @@ export async function getValidToken(): Promise<string> {
 }
 
 export async function fetchFromClashAPI(endpoint: string): Promise<any> {
-  // Initialize Supabase Client
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
   const supabase = createClient(supabaseUrl, supabaseKey);
-
-  try {
-    // Get a valid token (cached or new)
-    const apiToken = await getValidToken();
-
-    // Make the actual API call
-    const response = await fetch(`https://api.clashofclans.com/v1${endpoint}`, {
-      headers: {
-        'Authorization': `Bearer ${apiToken}`,
-        'Accept': 'application/json'
-      },
-      signal: AbortSignal.timeout(10000)
-    });
-
-    if (!response.ok) {
-      const error = new Error(`API Error: ${response.statusText}`) as ClashApiError;
-      error.statusCode = response.status;
-      
-      // If 403 Forbidden, it might mean the IP changed or key is invalid.
-      // We could try to delete the key from DB and retry once?
-      // For now, just throw.
-      
-      throw error;
+  const start = Date.now();
+  let attempt = 0;
+  let lastError: any = null;
+  while (attempt < 2) {
+    try {
+      attempt++;
+      const apiToken = await getValidToken();
+      const response = await fetch(`https://api.clashofclans.com/v1${endpoint}`, {
+        headers: {
+          'Authorization': `Bearer ${apiToken}`,
+          'Accept': 'application/json'
+        },
+        signal: AbortSignal.timeout(10000)
+      });
+      if (!response.ok) {
+        // 403: likely IP changed or key invalid -> purge DB record and retry once
+        if (response.status === 403 && attempt === 1) {
+          try {
+            const ip = await getCurrentIp();
+            await supabase.from('clash_api_keys').delete().eq('ip_address', ip);
+            console.warn(`403 received. Purged cached key for IP ${ip}. Retrying...`);
+            continue; // retry loop
+          } catch (purgeErr) {
+            console.error('Failed purging key on 403:', purgeErr);
+          }
+        }
+        const errBody = (response.headers.get('content-type') || '').includes('application/json') ? await response.json() : await response.text();
+        const error = new Error(`API Error ${response.status}: ${response.statusText}`) as ClashApiError;
+        error.statusCode = response.status;
+        error.type = 'clash_api';
+        (error as any).details = errBody;
+        throw error;
+      }
+      const json = await response.json();
+      console.log(JSON.stringify({
+        event: 'clash_api_request',
+        endpoint,
+        duration_ms: Date.now() - start,
+        attempt,
+        status: 'success',
+        size: Array.isArray(json) ? json.length : Object.keys(json || {}).length
+      }));
+      return json;
+    } catch (err) {
+      lastError = err;
+      console.error(JSON.stringify({
+        event: 'clash_api_error',
+        endpoint,
+        duration_ms: Date.now() - start,
+        attempt,
+        error: err.message,
+        statusCode: err.statusCode || null
+      }));
+      if (attempt >= 2) break; // exhausted retries
     }
-
-    return await response.json();
-  } catch (error: any) {
-    console.error('Clash API Error:', error);
-    throw error;
   }
+  throw lastError;
 }
 
 export function corsHeaders(origin: string = '*') {

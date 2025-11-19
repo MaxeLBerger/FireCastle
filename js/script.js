@@ -1,6 +1,20 @@
 // API Base URL - set by api-config.js or fallback to meta tag
 const API_BASE = (window.FIRECASTLE_API_BASE || document.querySelector('meta[name="firecastle-api-base"]')?.content || '/api').replace(/\/$/, '');
 
+// Centralized GET wrapper with unified error handling
+async function apiGet(endpoint, params = {}) {
+    const url = new URL(`${API_BASE}/${endpoint.replace(/^\//,'')}`);
+    Object.entries(params).forEach(([k,v]) => { if (v != null) url.searchParams.set(k, v); });
+    const res = await fetch(url.toString(), { headers: { 'Accept': 'application/json' } });
+    const ct = res.headers.get('content-type') || '';
+    const body = ct.includes('application/json') ? await res.json() : await res.text();
+    if (!res.ok) {
+        const msg = typeof body === 'string' ? body : body.error || 'Unknown error';
+        throw new Error(msg);
+    }
+    return body;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Nur ausführen, wenn der entsprechende Container existiert
     if (document.getElementById('search-result')) {
@@ -14,122 +28,76 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Fetch Clan Data
 async function fetchClanData(clanTag = '') {
-    const tag = clanTag || (document.getElementById('search-tag') && document.getElementById('search-tag').value.trim());
-    console.log(`Fetching clan data for tag: ${tag}`);
-
+    const tag = clanTag || (document.getElementById('search-tag')?.value.trim());
     if (!tag || !tag.startsWith('#')) {
-        alert(t('alert_invalid_clan_tag'));
-        return;
+      showError(t('alert_invalid_clan_tag'));
+      return;
     }
-
     try {
-    const response = await fetch(`${API_BASE}/clan?tag=${encodeURIComponent(tag)}`);
-    const contentType = response.headers.get('content-type') || '';
-    const data = contentType.includes('application/json') ? await response.json() : { error: await response.text() };
+        const data = await apiGet('clan', { tag });
         console.log('Clan data fetched:', data);
-
-        if (response.ok) {
-            const searchResult = document.getElementById('search-result');
-            if (searchResult) {
-                searchResult.innerHTML = `
-                    <h3>${t('section_clan_details')}</h3>
-                    <img src="${data.badgeUrls?.medium || 'images/default-badge.png'}" alt="${t('clan_badge_alt')}" />
-                    <p>${t('label_name')} ${data.name}</p>
-                    <p>${t('label_level')} ${data.level}</p>
-                    <p>${t('label_points')} ${data.points}</p>
-                    <p>${t('label_members')} ${data.members}</p>
-                    <p>${t('label_war_winrate')} ${data.warWinRate}</p>
-                    <p>${t('label_description')} ${data.description}</p>
-                `;
-                searchResult.style.display = 'block';
-            } else {
-                console.error('Search result container not found.');
-            }
-        } else {
-            alert(`${t('error_fetching_clan_data')}${data.error}`);
-        }
+        const searchResult = document.getElementById('search-result');
+        if (!searchResult) return console.error('Search result container not found.');
+        searchResult.innerHTML = `
+            <h3>${t('section_clan_details')}</h3>
+            <img src="${data.badgeUrls?.medium || 'images/default-badge.png'}" alt="${t('clan_badge_alt')}" />
+            <p>${t('label_name')} ${data.name}</p>
+            <p>${t('label_level')} ${data.level}</p>
+            <p>${t('label_points')} ${data.points}</p>
+            <p>${t('label_members')} ${data.members}</p>
+            <p>${t('label_war_winrate')} ${data.warWinRate}</p>
+            <p>${t('label_description')} ${data.description}</p>
+        `;
+        searchResult.style.display = 'block';
     } catch (error) {
         console.error('Error fetching clan data:', error);
-        alert(`${t('error_fetching_clan_data')}${error.message}`);
+        showError(`${t('error_fetching_clan_data')}${error.message}`);
     }
 }
 
 // Fetch Live War Status
 async function fetchLiveWarStatus() {
-    console.log('Fetching live war status...');
-    try {
-    const response = await fetch(`${API_BASE}/clanwar`);
-    const contentType = response.headers.get('content-type') || '';
-    const data = contentType.includes('application/json') ? await response.json() : { error: await response.text() };
-        console.log('Live war status fetched:', data);
-
-        if (response.ok) {
-            const warStatusContainer = document.getElementById('war-status');
-            if (warStatusContainer) {
-                warStatusContainer.innerHTML = `
-                    <p>${t('clan')}: ${data.clanName} ${t('vs')} ${t('opponent')}: ${data.opponentName}</p>
-                    <p>${t('score')}: ${data.clanStars} - ${data.opponentStars}</p>
-                    <p>${t('attacks_used')}: ${data.clanAttacks}/${data.totalAttacks}</p>
-                `;
-            } else {
-                console.error('War status container not found in HTML.');
-            }
-        } else {
-            const warStatusContainer = document.getElementById('war-status');
-            if (warStatusContainer) {
-                warStatusContainer.textContent = t('error_fetching_live_war_status');
-            }
-        }
-    } catch (error) {
-        console.error('Error fetching live war status:', error);
-        const warStatusContainer = document.getElementById('war-status');
-        if (warStatusContainer) {
-            warStatusContainer.textContent = t('failed_fetching_live_war_data');
-        }
-    }
+  try {
+    const data = await apiGet('clanwar');
+    console.log('Live war status fetched:', data);
+    const warStatusContainer = document.getElementById('war-status');
+    if (!warStatusContainer) return;
+    warStatusContainer.innerHTML = `
+      <p>${t('clan')}: ${data.clanName} ${t('vs')} ${t('opponent')}: ${data.opponentName}</p>
+      <p>${t('score')}: ${data.clanStars} - ${data.opponentStars}</p>
+      <p>${t('attacks_used')}: ${data.clanAttacks}/${data.totalAttacks}</p>
+    `;
+  } catch (error) {
+    console.error('Error fetching live war status:', error);
+    const warStatusContainer = document.getElementById('war-status');
+    if (warStatusContainer) warStatusContainer.textContent = t('failed_fetching_live_war_data');
+  }
 }
 
 // Fetch Player Data
 async function fetchPlayerData() {
-    const playerTagEl = document.getElementById('player-tag');
-    const playerTag = playerTagEl ? playerTagEl.value.trim() : '';
-    console.log(`Fetching player data for tag: ${playerTag}`);
-
-    if (!playerTag.startsWith('#')) {
-        alert(t('alert_invalid_player_tag'));
-        return;
-    }
-
-    try {
-    const response = await fetch(`${API_BASE}/player?tag=${encodeURIComponent(playerTag)}`);
-    const contentType = response.headers.get('content-type') || '';
-    const data = contentType.includes('application/json') ? await response.json() : { error: await response.text() };
-        console.log('Player data fetched:', data);
-
-        if (response.ok) {
-            const searchResult = document.getElementById('search-result');
-            if (searchResult) {
-                searchResult.innerHTML = `
-                    <h3>${t('section_player_details')}</h3>
-                    <img src="${data.avatarUrl || 'images/default-player.png'}" alt="${t('player_avatar_alt')}" />
-                    <p>${t('label_name')} ${data.name}</p>
-                    <p>${t('label_level')} ${data.level}</p>
-                    <p>${t('label_trophies')} ${data.trophies}</p>
-                    <p>${t('label_donations')} ${data.donations}</p>
-                    <p>${t('label_attack_wins')} ${data.attacks}</p>
-                    <p>${t('label_defense_wins')} ${data.defenses}</p>
-                `;
-                searchResult.style.display = 'block';
-            } else {
-                console.error('Search result container not found.');
-            }
-        } else {
-            alert(`${t('error_fetching_player_data')}${data.error}`);
-        }
-    } catch (error) {
-        console.error('Error fetching player data:', error);
-        alert(`${t('error_fetching_player_data')}${error.message}`);
-    }
+  const playerTag = document.getElementById('player-tag')?.value.trim() || '';
+  if (!playerTag.startsWith('#')) return showError(t('alert_invalid_player_tag'));
+  try {
+    const data = await apiGet('player', { tag: playerTag });
+    console.log('Player data fetched:', data);
+    const searchResult = document.getElementById('search-result');
+    if (!searchResult) return console.error('Search result container not found.');
+    searchResult.innerHTML = `
+      <h3>${t('section_player_details')}</h3>
+      <img src="${data.avatarUrl || 'images/default-player.png'}" alt="${t('player_avatar_alt')}" />
+      <p>${t('label_name')} ${data.name}</p>
+      <p>${t('label_level')} ${data.level}</p>
+      <p>${t('label_trophies')} ${data.trophies}</p>
+      <p>${t('label_donations')} ${data.donations}</p>
+      <p>${t('label_attack_wins')} ${data.attacks}</p>
+      <p>${t('label_defense_wins')} ${data.defenses}</p>
+    `;
+    searchResult.style.display = 'block';
+  } catch (error) {
+    console.error('Error fetching player data:', error);
+    showError(`${t('error_fetching_player_data')}${error.message}`);
+  }
 }
 
 // Funktion zur Handhabung der Suche
@@ -141,30 +109,40 @@ async function handleSearch() {
     console.log(`Handling search for type: ${searchType} with tag: ${searchTag}`);
 
     if (!searchTag.startsWith('#')) {
-        alert(searchType === 'clan' ? t('alert_invalid_clan_tag') : t('alert_invalid_player_tag'));
-        return;
+      showError(searchType === 'clan' ? t('alert_invalid_clan_tag') : t('alert_invalid_player_tag'));
+      return;
     }
 
-    try {
-    const endpoint = searchType === 'clan' ? `${API_BASE}/clan` : `${API_BASE}/player`;
-    const response = await fetch(`${endpoint}?tag=${encodeURIComponent(searchTag)}`);
-    const contentType = response.headers.get('content-type') || '';
-    const data = contentType.includes('application/json') ? await response.json() : { error: await response.text() };
-        console.log(`Search result for ${searchType}:`, data);
-
-        if (response.ok) {
+        try {
             if (searchType === 'clan') {
-                // Anzeige der Clan-Daten
                 await fetchClanData(searchTag);
             } else {
-                // Anzeige der Spieler-Daten
                 await fetchPlayerData();
             }
-        } else {
-            alert(`${t('error_fetching_' + searchType + '_data')}${data.error}`);
+        } catch (error) {
+            console.error(`Error fetching ${searchType} data:`, error);
+            showError(`${t('error_fetching_' + searchType + '_data')}${error.message}`);
         }
-    } catch (error) {
-        console.error(`Error fetching ${searchType} data:`, error);
-        alert(`${t('error_fetching_' + searchType + '_data')}${error.message}`);
-    }
+}
+
+// Centralized UI error panel
+function ensureErrorPanel() {
+  let panel = document.getElementById('error-panel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'error-panel';
+    panel.style.cssText = 'background:#7d1212;color:#fff;padding:8px 12px;margin:8px 0;border-radius:4px;font-size:14px;display:none;';
+    const container = document.body.querySelector('#search-section') || document.body;
+    container.prepend(panel);
+  }
+  return panel;
+}
+
+function showError(message) {
+  const panel = ensureErrorPanel();
+  panel.textContent = message;
+  panel.style.display = 'block';
+  setTimeout(() => {
+    panel.style.display = 'none';
+  }, 8000);
 }

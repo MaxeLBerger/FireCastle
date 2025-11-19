@@ -1,6 +1,5 @@
 ﻿import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
-import { getValidToken } from '../_shared/clashApi.ts';
-import { corsHeaders } from '../_shared/cors.ts';
+import { fetchFromClashAPI, corsHeaders } from '../_shared/clashApi.ts';
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -14,20 +13,7 @@ serve(async (req) => {
 
     console.log('Fetching clan data for:', clanTag);
     
-    const token = await getValidToken();
-    
-    const response = await fetch(`https://api.clashofclans.com/v1/clans/${encodeURIComponent(clanTag)}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Clash API Error: ${response.status} ${response.statusText}`);
-    }
-
-    const clanData = await response.json();
+    const clanData = await fetchFromClashAPI(`/clans/${encodeURIComponent(clanTag)}`);
     
     return new Response(JSON.stringify(clanData), {
       status: 200,

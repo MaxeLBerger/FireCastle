@@ -1,6 +1,5 @@
 ﻿import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
-import { getValidToken } from '../_shared/clashApi.ts';
-import { corsHeaders } from '../_shared/cors.ts';
+import { fetchFromClashAPI, corsHeaders } from '../_shared/clashApi.ts';
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -13,26 +12,9 @@ serve(async (req) => {
     const clanTag = url.searchParams.get('tag') || '#P9QGQLPU';
 
     console.log('Fetching clan stats for:', clanTag);
-    
-    const token = await getValidToken();
-    
-    // Fetch clan data and war log in parallel
-    const [clanResponse, warLogResponse] = await Promise.all([
-      fetch(`https://api.clashofclans.com/v1/clans/${encodeURIComponent(clanTag)}`, {
-        headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
-      }),
-      fetch(`https://api.clashofclans.com/v1/clans/${encodeURIComponent(clanTag)}/warlog`, {
-        headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
-      })
-    ]);
-
-    if (!clanResponse.ok || !warLogResponse.ok) {
-      throw new Error(`Clash API Error: ${clanResponse.status} or ${warLogResponse.status}`);
-    }
-
     const [clanData, warLog] = await Promise.all([
-      clanResponse.json(),
-      warLogResponse.json()
+      fetchFromClashAPI(`/clans/${encodeURIComponent(clanTag)}`),
+      fetchFromClashAPI(`/clans/${encodeURIComponent(clanTag)}/warlog`)
     ]);
 
     // Calculate win rate from war log
