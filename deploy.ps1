@@ -1,42 +1,83 @@
-# FireCastle Production Deployment
-# Deploys Supabase Edge Functions with Auto-Login
+<#
+ FireCastle Production Deployment
+ --------------------------------
+ Deploys Supabase Edge Functions with Clash API auto-login.
+
+ Enhancements:
+    - Robust Supabase CLI detection and version output
+    - Optional environment variable driven project linking (SUPABASE_PROJECT_ID)
+    - Pre-flight validation of Edge Functions directory
+    - Clear error handling & colored status messages
+    - Safe exit codes for CI integration later
+    - Summary section with next steps
+#>
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
 
 Write-Host "FireCastle Deployment" -ForegroundColor Cyan
 Write-Host "=====================" -ForegroundColor Cyan
 
-# Ensure we are in the FireCastle directory
-if (!(Test-Path "supabase")) {
-    Write-Host "Error: Please run this script from the FireCastle directory." -ForegroundColor Red
+function Fail($msg) {
+    Write-Host "ERROR: $msg" -ForegroundColor Red
     exit 1
 }
 
-# Check for Supabase CLI via npx
+# Ensure repository structure (supabase/functions exists)
+if (!(Test-Path "supabase")) { Fail "Run this script from the FireCastle root (supabase folder missing)." }
+if (!(Test-Path "supabase/functions")) { Fail "supabase/functions folder missing." }
+
 Write-Host "Checking Supabase CLI..." -ForegroundColor Yellow
 try {
-     = npx supabase --version
-    Write-Host "Supabase CLI found: " -ForegroundColor Green
+    $supabaseVersion = (npx supabase --version) 2>$null
+    if (-not $supabaseVersion) { throw "No version returned" }
+    Write-Host "Supabase CLI found: $supabaseVersion" -ForegroundColor Green
 } catch {
-    Write-Host "Supabase CLI not found. Installing locally..." -ForegroundColor Yellow
-    npm install -D supabase
+    Write-Host "Supabase CLI not found. Installing locally (dev dependency)..." -ForegroundColor Yellow
+    npm install -D supabase | Out-Null
+    try {
+        $supabaseVersion = (npx supabase --version) 2>$null
+        Write-Host "Supabase CLI installed: $supabaseVersion" -ForegroundColor Green
+    } catch { Fail "Failed to install Supabase CLI: $($_.Exception.Message)" }
 }
 
-# Login
-Write-Host ""
-Write-Host "Step 1: Login to Supabase" -ForegroundColor Yellow
-Write-Host "If a browser opens, please log in. If asked for a token, paste it here." -ForegroundColor Gray
-npx supabase login
+# Login (skips if already authenticated; Supabase CLI manages session)
+Write-Host "\nStep 1: Supabase Login" -ForegroundColor Yellow
+Write-Host "If a browser opens, complete login. If terminal asks for PAT, paste it." -ForegroundColor Gray
+try {
+    npx supabase login | Out-Null
+    Write-Host "Login step completed (or already authenticated)." -ForegroundColor Green
+} catch { Fail "Supabase login failed: $($_.Exception.Message)" }
 
-# Link
-Write-Host ""
-Write-Host "Step 2: Link Project" -ForegroundColor Yellow
-$projectId = Read-Host "Enter your Supabase Project ID (from URL, e.g. 'abcdefghijklm')"
-npx supabase link --project-ref $projectId
+# Link project (env override or prompt)
+Write-Host "\nStep 2: Link Project" -ForegroundColor Yellow
+$projectRef = $env:SUPABASE_PROJECT_ID
+if ([string]::IsNullOrWhiteSpace($projectRef)) {
+    $projectRef = Read-Host "Enter Supabase Project ID (from dashboard URL)"
+}
+if ([string]::IsNullOrWhiteSpace($projectRef)) { Fail "No project ID provided" }
+try {
+    npx supabase link --project-ref $projectRef | Out-Null
+    Write-Host "Linked to project: $projectRef" -ForegroundColor Green
+} catch { Fail "Project link failed: $($_.Exception.Message)" }
 
-# Deploy
-Write-Host ""
-Write-Host "Step 3: Deploy Functions" -ForegroundColor Yellow
-npx supabase functions deploy --no-verify-jwt
+# Optional secrets sync hint
+Write-Host "\n(Optional) To set secrets: npx supabase secrets set NAME=VALUE" -ForegroundColor DarkGray
 
-Write-Host ""
-Write-Host "Deployment Complete!" -ForegroundColor Green
-Write-Host "Your functions are now live and will auto-login to Clash API." -ForegroundColor Cyan
+# Deploy functions (all .ts in supabase/functions/*)
+Write-Host "\nStep 3: Deploy Edge Functions" -ForegroundColor Yellow
+try {
+    npx supabase functions deploy --no-verify-jwt | Out-Null
+    Write-Host "Functions deployed successfully." -ForegroundColor Green
+} catch { Fail "Function deployment failed: $($_.Exception.Message)" }
+
+# Post-deploy summary
+Write-Host "\nDeployment Complete!" -ForegroundColor Green
+Write-Host "Project: $projectRef" -ForegroundColor Cyan
+Write-Host "Next Steps:" -ForegroundColor Cyan
+Write-Host "  - Verify endpoints in Supabase Dashboard (Edge Functions logs)." -ForegroundColor Gray
+Write-Host "  - Confirm Clash API auto-login in logs (token rotation events)." -ForegroundColor Gray
+Write-Host "  - Add secrets with API keys if not yet stored." -ForegroundColor Gray
+Write-Host "  - Re-run this script after adding new functions." -ForegroundColor Gray
+
+exit 0
