@@ -91,6 +91,22 @@ Varianten:
 - Vollständig auf einem Server hosten (Empfehlung): Domain/Reverse Proxy → Node-App. Dann funktionieren relative Calls wie `/api/clan` direkt.
 - Frontend z. B. via GitHub Pages unter `/FireCastle` und Backend separat hosten: Dann im Frontend eine Basis-URL konfigurieren (oder Reverse Proxy einrichten), damit Requests an dein Backend gehen.
 
+## Screenshots
+
+- Suche (Clan-Tag-Suche auf dem Hauptscreen):
+
+  ![Clan-Suche](images/fc_search.png)
+
+- Bewerbungsseite:
+
+  ![Bewerbungsseite](images/fc_apply.png)
+
+- Farbschema-Beispiele (anpassbare Farben):
+
+  ![Lila Farbschema](images/fc_purple.png)
+
+  ![Grünes Farbschema](images/fc_green.png)
+
 ## Tests und Entwicklung
 
 ## Tests
