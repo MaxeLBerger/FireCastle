@@ -2,7 +2,8 @@
 // This file configures the API base URL for production deployment
 
 // Supabase Edge Functions base URL
-const SUPABASE_PROJECT_URL = 'https://wwopmipdxzhkouxngezp.supabase.co';
+// Updated project ID to match current deployment (cwegxovyuogdajbfnurv)
+const SUPABASE_PROJECT_URL = 'https://cwegxovyuogdajbfnurv.supabase.co';
 const SUPABASE_FUNCTIONS_PATH = '/functions/v1';
 
 // API endpoints mapping

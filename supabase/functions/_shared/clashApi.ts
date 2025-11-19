@@ -100,7 +100,11 @@ async function rotateKeys(cookie: string) {
   }
 }
 
-async function getValidToken(supabase: any): Promise<string> {
+// Exported token resolver (creates its own Supabase client)
+export async function getValidToken(): Promise<string> {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+  const supabase = createClient(supabaseUrl, supabaseKey);
   // 1. Get current IP
   const currentIp = await getCurrentIp();
   console.log(`Current Edge Function IP: ${currentIp}`);
@@ -154,7 +158,7 @@ export async function fetchFromClashAPI(endpoint: string): Promise<any> {
 
   try {
     // Get a valid token (cached or new)
-    const apiToken = await getValidToken(supabase);
+    const apiToken = await getValidToken();
 
     // Make the actual API call
     const response = await fetch(`https://api.clashofclans.com/v1${endpoint}`, {
